@@ -1,0 +1,151 @@
+---
+# ref. https://docs.datadoghq.com/resources/json/kinesis-logs-cloudformation-template.json
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Datadog log shipper
+
+Parameters:
+  DatadogHttpEndpointUrl:
+    Type: String
+    Default: https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input
+    AllowedValues:
+    - https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input
+    - https://aws-kinesis-http-intake.logs.datadoghq.eu/v1/input
+  DatadogAPIKey:
+    Type: String
+    NoEcho: 'true'
+  FailedLogDeliveryPrefix:
+    Type: String
+    Default: ''
+
+Resources:
+  DeliveryStreamLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "/aws/kinesisfirehose/DATADOG-LOGS"
+      RetentionInDays: 14
+
+  DeliveryStreamLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref DeliveryStreamLogGroup
+      LogStreamName: 'datadog-delivery'
+
+  BackupDeliveryLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref DeliveryStreamLogGroup
+      LogStreamName: 'backup-delivery'
+
+  FailedDataBucket:
+    Type: AWS::S3::Bucket
+
+  CloudWatchLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: !Sub "logs.${AWS::Region}.amazonaws.com"
+            Action: sts:AssumeRole
+
+  CloudWatchLogsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-datadog-cloudwatch-logs-policy"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - firehose:PutRecord
+              - firehose:PutRecordBatch
+              - kinesis:PutRecord
+              - kinesis:PutRecordBatch
+            Resource: !GetAtt DatadogDeliveryStream.Arn
+          - Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: !GetAtt CloudWatchLogsRole.Arn
+      Roles:
+        - !Ref CloudWatchLogsRole
+
+  FirehoseLogsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: ''
+          Effect: Allow
+          Principal:
+            Service: firehose.amazonaws.com
+          Action: sts:AssumeRole
+          Condition:
+            StringEquals:
+              sts:ExternalId: !Ref AWS::AccountId
+
+  FirehoseLogsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-datadog-firehose-delivery-policy"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:AbortMultipartUpload
+              - s3:GetBucketLocation
+              - s3:GetObject
+              - s3:ListBucket
+              - s3:ListBucketMultipartUploads
+              - s3:PutObject
+            Resource: 
+              - !GetAtt FailedDataBucket.Arn
+              - !Sub "${FailedDataBucket.Arn}/*"
+          - Effect: Allow
+            Action:
+              - logs:PutLogEvents
+            Resource: !GetAtt DeliveryStreamLogGroup.Arn
+          - Effect: Allow
+            Action:
+              - kinesis:DescribeStream
+              - kinesis:GetShardIterator
+              - kinesis:GetRecords
+            Resource: !GetAtt DatadogDeliveryStream.Arn
+      Roles:
+        - !Ref FirehoseLogsRole
+
+  DatadogDeliveryStream:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: DATADOG-LOGS
+      DeliveryStreamType: DirectPut
+      HttpEndpointDestinationConfiguration:
+        RoleARN: !GetAtt FirehoseLogsRole.Arn
+        EndpointConfiguration:
+          Url: !Ref DatadogHttpEndpointUrl
+          AccessKey: !Ref DatadogAPIKey
+          Name: "datadog-logs-endpoint"
+        RequestConfiguration:
+          ContentEncoding: GZIP
+        CloudWatchLoggingOptions:
+          Enabled: true
+          LogGroupName: !Ref DeliveryStreamLogGroup
+          LogStreamName: !Ref DeliveryStreamLogStream
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 4
+        RetryOptions:
+          DurationInSeconds: 60
+        S3BackupMode: FailedDataOnly
+        S3Configuration:
+          BucketARN: !GetAtt FailedDataBucket.Arn
+          CompressionFormat: UNCOMPRESSED
+          Prefix: !Ref FailedLogDeliveryPrefix
+          RoleARN: !GetAtt FirehoseLogsRole.Arn
+          CloudWatchLoggingOptions:
+            Enabled: true
+            LogGroupName: !Ref DeliveryStreamLogGroup
+            LogStreamName: !Ref BackupDeliveryLogStream
