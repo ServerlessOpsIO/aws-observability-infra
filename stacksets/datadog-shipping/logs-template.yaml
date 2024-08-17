@@ -62,7 +62,6 @@ Resources:
               - firehose:PutRecord
               - firehose:PutRecordBatch
               - kinesis:PutRecord
-              - kinesis:PutRecordBatch
             Resource: !GetAtt DatadogDeliveryStream.Arn
           - Effect: Allow
             Action:
