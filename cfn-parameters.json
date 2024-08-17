@@ -1,6 +1,6 @@
 {
     "ObservabilityOu": "ou-c834-7gp1wa8v",
     "TargetRegions": "us-east-1",
-    "DatadogHttpEndpointUrl": "https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input",
+    "DatadogHttpEndpointUrl": "https://aws-kinesis-http-intake.logs.us5.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose",
     "DatadogApiKey": $secrets.DATADOG_API_KEY
 }

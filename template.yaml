@@ -11,9 +11,6 @@ Parameters:
     Description: OU of observability accounts
   DatadogHttpEndpointUrl:
     Type: String
-    AllowedValues:
-      - https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input
-      - https://aws-kinesis-http-intake.logs.datadoghq.eu/v1/input
   DatadogApiKey:
     Type: String
     NoEcho: 'true'
