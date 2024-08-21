@@ -9,10 +9,8 @@ Parameters:
     Type: String
   TargetRegions:
     Type: String
-    Description: List of OUs
   ObservabilityOu:
     Type: String
-    Description: OU of observability accounts
   DatadogHttpEndpointUrl:
     Type: String
   DatadogApiKey:
@@ -34,6 +32,17 @@ Resources:
         TargetRegions: !Ref TargetRegions
         DatadogHttpEndpointUrl: !Ref DatadogHttpEndpointUrl
         DatadogApiKey: !Ref DatadogApiKey
+
+  LogShippingStackSet:
+    Type: AWS::Serverless::Application
+    DependsOn:
+      - DatadogShippingStackSet
+    Properties:
+      Location: "./stacksets/logging/stackset.yaml"
+      Parameters:
+        DestinationArn: !Ref DataDogLogsDestinationArn
+        DeploymentOrgId: !Ref AwsOrgRootId
+        TargetRegions: !Ref TargetRegions
 
   LogShippingManagementStack:
     Type: AWS::Serverless::Application
