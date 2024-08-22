@@ -3,27 +3,13 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Datadog AWS Streams
 Parameters:
-  ApiKey:
+  DatadogApiKey:
     Description: >-
       Your Datadog API Key
     Type: String
     AllowedPattern: .+
-    ConstraintDescription: ApiKey is required
+    ConstraintDescription: DatadogApiKey is required
     NoEcho: true
-
-  ServiceRoleArn:
-    Description: >-
-      The arn for the service role used by kinesis firehose
-    Type: String
-    AllowedPattern: .+
-    ConstraintDescription: ServiceRoleArn is required
-
-  StreamRoleArn:
-    Description: >-
-      The arn for the stream used by the cloudwatch stream
-    Type: String
-    AllowedPattern: .+
-    ConstraintDescription: StreamRoleArn is required
 
   FilterMethod:
     Description: >-
@@ -136,6 +122,66 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
+  CloudWatchMetricsStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: "streams.metrics.cloudwatch.amazonaws.com"
+            Action: sts:AssumeRole
+
+  CloudWatchMetricsStreamPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      Roles:
+        - !Ref CloudWatchMetricsStreamRole
+      PolicyName: !Sub "${AWS::StackName}-datadog-firehose-metrics-stream"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - "firehose:PutRecord"
+              - "firehose:PutRecordBatch"
+            Resource:
+              - !GetAtt DatadogMetricKinesisFirehose.Arn
+
+  FirehoseMetricsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: ''
+          Effect: Allow
+          Principal:
+            Service: firehose.amazonaws.com
+          Action: sts:AssumeRole
+  
+  FirehoseMetricsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      Roles:
+        - !Ref FirehoseMetricsRole
+      PolicyName: !Sub "${AWS::StackName}-datadog-firehose-delivery-policy"
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:AbortMultipartUpload"
+              - "s3:GetBucketLocation"
+              - "s3:GetObject"
+              - "s3:ListBucket"
+              - "s3:ListBucketMultipartUploads"
+              - "s3:PutObject"
+            Resource:
+              - !GetAtt DatadogStreamBackupBucket.Arn
+              - !Sub "${DatadogStreamBackupBucket.Arn}/*"
+
   DatadogMetricKinesisFirehose:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
@@ -151,17 +197,17 @@ Resources:
             - !Ref DatadogSite
             - Endpoint
           Name: "datadog-metrics-endpoint"
-          AccessKey: !Ref ApiKey
+          AccessKey: !Ref DatadogApiKey
         CloudWatchLoggingOptions:
           Enabled: True
           LogGroupName: !Ref DatadogStreamLogs
           LogStreamName: !Ref HTTPLogStream
-        RoleARN: !Ref ServiceRoleArn
+        RoleARN: !GetAtt FirehoseMetricsRole.Arn
         RetryOptions:
           DurationInSeconds: 60
         S3BackupMode: "FailedDataOnly"
         S3Configuration:
-          RoleARN: !Ref ServiceRoleArn
+          RoleARN: !GetAtt FirehoseMetricsRole.Arn
           BucketARN: !GetAtt DatadogStreamBackupBucket.Arn
           ErrorOutputPrefix: !Ref FailedLogDeliveryPrefix
           BufferingHints:
@@ -183,7 +229,7 @@ Resources:
     Properties:
       Name: "datadog-metrics-stream"
       FirehoseArn: !GetAtt DatadogMetricKinesisFirehose.Arn
-      RoleArn: !Ref StreamRoleArn
+      RoleArn: !GetAtt CloudWatchMetricsStreamRole.Arn
       OutputFormat: "opentelemetry0.7"
       IncludeFilters: !If
         - IsInclude

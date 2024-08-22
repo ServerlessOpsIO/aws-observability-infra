@@ -1,6 +1,8 @@
 Metadata:
   DatadogLogShipping:
     localTemplateFile: &dd_logs_template_body ./logs-template.yaml
+  DatadogMetricsShipping:
+    localTemplateFile: &dd_metrics_template_body ./metrics-stream-template.yaml
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
@@ -52,3 +54,39 @@ Resources:
         MaxConcurrentCount: 5
       PermissionModel: SERVICE_MANAGED
       TemplateBody: *dd_logs_template_body
+
+  DatadogStreamStackSet:
+    Type: AWS::CloudFormation::StackSet
+    Properties:
+      StackSetName: DatadogMetricsStreams
+      Description: Datadog metrics stream
+      Parameters:
+        - ParameterKey: DatadogApiKey
+          ParameterValue: !Ref DatadogApiKey
+        - ParameterKey: DatadogSite
+          ParameterValue: !Ref DatadogSite
+        - ParameterKey: FilterMethod
+          ParameterValue: 'NONE'
+        - ParameterKey: FirstNamespace
+          ParameterValue: ''
+        - ParameterKey: SecondNamespace
+          ParameterValue: ''
+        - ParameterKey: ThirdNamespace
+          ParameterValue: ''
+      Capabilities:
+        - CAPABILITY_IAM
+      StackInstancesGroup:
+        - DeploymentTargets:
+            OrganizationalUnitIds: !Ref ObservabilityOu
+          Regions: !Ref TargetRegions
+      AutoDeployment:
+        Enabled: true
+        RetainStacksOnAccountRemoval: false
+      ManagedExecution:
+        Active: true
+      OperationPreferences:
+        RegionConcurrencyType: PARALLEL
+        FailureToleranceCount: 1
+        MaxConcurrentCount: 5
+      PermissionModel: SERVICE_MANAGED
+      TemplateBody: *dd_metrics_template_body
