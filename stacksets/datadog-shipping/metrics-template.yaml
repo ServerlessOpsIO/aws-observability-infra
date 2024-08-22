@@ -59,6 +59,10 @@ Parameters:
     Default: "datadoghq.com"
     ConstraintDescription: DdSite is required
 
+  FailedLogDeliveryPrefix:
+    Type: String
+    Default: ''
+
 Conditions:
   IsInclude: !Equals [!Ref FilterMethod, "Include"]
   IsExclude: !Not [!Equals [!Ref FilterMethod, "Include"]]
@@ -110,23 +114,24 @@ Resources:
   DatadogStreamLogs:
     Type: AWS::Logs::LogGroup
     Properties:
-      LogGroupName: "datadog-metric-stream"
+      LogGroupName: "/aws/kinesisfirehose/DATADOG-METRICS"
       RetentionInDays: 14
 
   HTTPLogStream:
     Type: AWS::Logs::LogStream
     Properties:
       LogGroupName: !Ref DatadogStreamLogs
-      LogStreamName: "http_endpoint_delivery"
+      LogStreamName: "datadog-delivery"
+
   S3Backup:
     Type: AWS::Logs::LogStream
     Properties:
       LogGroupName: !Ref DatadogStreamLogs
-      LogStreamName: "s3_backup"
+      LogStreamName: "backup-delivery"
+
   DatadogStreamBackupBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "datadog-aws-metric-stream-backup-${AWS::AccountId}-${AWS::Region}"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -140,7 +145,7 @@ Resources:
   DatadogMetricKinesisFirehose:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
-      DeliveryStreamName: "datadog-metrics-stream"
+      DeliveryStreamName: "DATADOG-METRICS"
       DeliveryStreamType: "DirectPut"
       HttpEndpointDestinationConfiguration:
         BufferingHints:
@@ -151,12 +156,12 @@ Resources:
             - DdSiteToEndpoint
             - !Ref DdSite
             - Endpoint
-          Name: "Event intake"
+          Name: "datadog-metrics-endpoint"
           AccessKey: !Ref ApiKey
         CloudWatchLoggingOptions:
           Enabled: True
           LogGroupName: !Ref DatadogStreamLogs
-          LogStreamName: "http_endpoint_delivery"
+          LogStreamName: !Ref HTTPLogStream
         RoleARN: !Ref ServiceRoleArn
         RetryOptions:
           DurationInSeconds: 60
@@ -164,7 +169,7 @@ Resources:
         S3Configuration:
           RoleARN: !Ref ServiceRoleArn
           BucketARN: !GetAtt DatadogStreamBackupBucket.Arn
-          ErrorOutputPrefix: "datadog_stream"
+          ErrorOutputPrefix: !Ref FailedLogDeliveryPrefix
           BufferingHints:
             SizeInMBs: 4
             IntervalInSeconds: 60
@@ -172,7 +177,7 @@ Resources:
           CloudWatchLoggingOptions:
             Enabled: True
             LogGroupName: !Ref DatadogStreamLogs
-            LogStreamName: "s3_backup"
+            LogStreamName: !Ref S3Backup
       Tags:
         - Key: "Team"
           Value: "aws-integration"
