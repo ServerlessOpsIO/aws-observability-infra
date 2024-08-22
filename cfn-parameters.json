@@ -5,5 +5,7 @@
     "TargetRegions": "us-east-1",
     "DatadogHttpEndpointUrl": "https://aws-kinesis-http-intake.logs.us5.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose",
     "DatadogApiKey": $secrets.DATADOG_API_KEY,
-    "DataDogLogsDestinationArn": $secrets.DATADOG_LOGS_DESTINATION_ARN
+    "DatadogAppKey": $secrets.DATADOG_APP_KEY,
+    "DataDogLogsDestinationArn": $secrets.DATADOG_LOGS_DESTINATION_ARN,
+    "DatadogSite": "us5.datadoghq.com"
 }

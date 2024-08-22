@@ -13,7 +13,12 @@ Parameters:
     Type: String
   DatadogHttpEndpointUrl:
     Type: String
+  DatadogSite:
+    Type: String
   DatadogApiKey:
+    Type: String
+    NoEcho: 'true'
+  DatadogAppKey:
     Type: String
     NoEcho: 'true'
   DataDogLogsDestinationArn:
@@ -21,6 +26,14 @@ Parameters:
     NoEcho: 'true'
 
 Resources:
+  DatadogIntegrationManagementStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml"
+      Parameters:
+        DatadogApiKey: !Ref DatadogApiKey
+        DatadogAppKey: !Ref DatadogAppKey
+        DatadogSite: !Ref DatadogSite
 
   DatadogShippingStackSet:
     Type: AWS::Serverless::Application
