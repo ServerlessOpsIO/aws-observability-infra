@@ -1,24 +1,18 @@
-Metadata:
-  DatadogLogShipping:
-    localTemplateFile: &dd_logs_template_body ./logs-template.yaml
-
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: AWS account infrastructure stackset (datadog log shipping)
+Description: AWS account infrastructure stackset (datadog integration)
 
 Parameters:
-  AwsOrgId:
-    Type: String
-    Description: AWS Organization ID
-  ObservabilityOu:
+  DeploymentOrgId:
     Type: CommaDelimitedList
-    Description: List of OUs
   TargetRegions:
     Type: CommaDelimitedList
-    Description: Regions to deploy to
-  DatadogHttpEndpointUrl:
+  DatadogSite:
     Type: String
   DatadogApiKey:
+    Type: String
+    NoEcho: 'true'
+  DatadogAppKey:
     Type: String
     NoEcho: 'true'
 
@@ -26,20 +20,21 @@ Resources:
   DatadogLogShippingStackSet:
     Type: AWS::CloudFormation::StackSet
     Properties:
-      StackSetName: DatadogLogShipping
-      Description: Datadog log shipping
+      StackSetName: DatadogIntegration
+      Description: Datadog integration
       Parameters:
-        - ParameterKey: DatadogHttpEndpointUrl
-          ParameterValue: !Ref DatadogHttpEndpointUrl
-        - ParameterKey: DatadogAPIKey
+        - ParameterKey: DatadogSite
+          ParameterValue: !Ref DatadogSite
+        - ParameterKey: DatadogApiKey
           ParameterValue: !Ref DatadogApiKey
-        - ParameterKey: AwsOrgId
-          ParameterValue: !Ref AwsOrgId
+        - ParameterKey: DatadogAppKey
+          ParameterValue: !Ref DatadogAppKey
       Capabilities:
         - CAPABILITY_IAM
+        - CAPABILITY_NAMED_IAM
       StackInstancesGroup:
         - DeploymentTargets:
-            OrganizationalUnitIds: !Ref ObservabilityOu
+            OrganizationalUnitIds: !Ref DeploymentOrgId
           Regions: !Ref TargetRegions
       AutoDeployment:
         Enabled: true
@@ -51,4 +46,4 @@ Resources:
         FailureToleranceCount: 1
         MaxConcurrentCount: 5
       PermissionModel: SERVICE_MANAGED
-      TemplateBody: *dd_logs_template_body
+      TemplateURL: https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml

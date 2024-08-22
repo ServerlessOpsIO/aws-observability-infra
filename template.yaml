@@ -26,6 +26,17 @@ Parameters:
     NoEcho: 'true'
 
 Resources:
+  DatadogIntegrationStackSet:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/datadog-integration/stackset.yaml"
+      Parameters:
+        DeploymentOrgId: !Ref AwsOrgRootId
+        TargetRegions: !Ref TargetRegions
+        DatadogApiKey: !Ref DatadogApiKey
+        DatadogAppKey: !Ref DatadogAppKey
+        DatadogSite: !Ref DatadogSite
+  
   DatadogIntegrationManagementStack:
     Type: AWS::Serverless::Application
     Properties:
