@@ -10,33 +10,39 @@ Parameters:
     AllowedPattern: .+
     ConstraintDescription: ApiKey is required
     NoEcho: true
+
   ServiceRoleArn:
     Description: >-
       The arn for the service role used by kinesis firehose
     Type: String
     AllowedPattern: .+
     ConstraintDescription: ServiceRoleArn is required
+
   StreamRoleArn:
     Description: >-
       The arn for the stream used by the cloudwatch stream
     Type: String
     AllowedPattern: .+
     ConstraintDescription: StreamRoleArn is required
+
   FilterMethod:
     Description: >-
       "Include" for an inclusion filter or "Exclude" for an exclusion filter for the following namespaces.
     Type: String
     Default: "Include"
+
   FirstNamespace:
     Description: >-
       A namespace to use for filtering. Leave blank if you do not need to filter by namespace.
     Type: String
     Default: ""
+
   SecondNamespace:
     Description: >-
       A namespace to use for filtering. Leave blank if you do not need to filter by namespace.
     Type: String
     Default: ""
+
   ThirdNamespace:
     Description: >-
       A namespace to use for filtering. Leave blank if you do not need to filter by namespace.
@@ -44,6 +50,7 @@ Parameters:
       within the AWS CloudWatch Console after the stack is created successfully.
     Type: String
     Default: ""
+
   DdSite:
     Description: >-
       Define your Datadog Site to send data to. For the Datadog EU site, set to datadoghq.eu
@@ -51,6 +58,7 @@ Parameters:
     AllowedPattern: .+
     Default: "datadoghq.com"
     ConstraintDescription: DdSite is required
+
 Conditions:
   IsInclude: !Equals [!Ref FilterMethod, "Include"]
   IsExclude: !Not [!Equals [!Ref FilterMethod, "Include"]]
@@ -84,6 +92,7 @@ Conditions:
       !Not [!Equals [!Ref ThirdNamespace, ""]],
       !Not [!Equals [!Ref FilterMethod, "Include"]],
     ]
+
 Mappings:
     DdSiteToEndpoint:
         "datad0g.com":
@@ -96,12 +105,14 @@ Mappings:
             Endpoint: "https://awsmetrics-intake.ap1.datadoghq.com/api/v2/awsmetrics?dd-protocol=aws-kinesis-firehose"
         "datadoghq.com":
             Endpoint: "https://awsmetrics-intake.datadoghq.com/api/v2/awsmetrics?dd-protocol=aws-kinesis-firehose"
+
 Resources:
   DatadogStreamLogs:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: "datadog-metric-stream"
       RetentionInDays: 14
+
   HTTPLogStream:
     Type: AWS::Logs::LogStream
     Properties:
@@ -125,6 +136,7 @@ Resources:
         BlockPublicPolicy: true
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
+
   DatadogMetricKinesisFirehose:
     Type: AWS::KinesisFirehose::DeliveryStream
     Properties:
@@ -166,6 +178,7 @@ Resources:
           Value: "aws-integration"
         - Key: "StreamAccountID"
           Value: !Ref "AWS::AccountId"
+
   DatadogMetricStreamAllNamespaces:
     Type: AWS::CloudWatch::MetricStream
     Properties:
