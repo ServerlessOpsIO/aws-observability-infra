@@ -6,7 +6,7 @@ Description: Datadog log shipper
 Parameters:
   AwsOrgId:
     Type: String
-  DatadogHttpEndpointUrl:
+  DatadogSite:
     Type: String
   DatadogAPIKey:
     Type: String
@@ -14,6 +14,15 @@ Parameters:
   FailedLogDeliveryPrefix:
     Type: String
     Default: ''
+
+Mappings:
+    DatadogSiteToEndpoint:
+        "us3.datadoghq.com":
+            Endpoint: "https://aws-kinesis-http-intake.logs.us3.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose"
+        "us5.datadoghq.com":
+            Endpoint: "https://aws-kinesis-http-intake.logs.us5.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose"
+        "datadoghq.com":
+            Endpoint: "https://aws-kinesis-http-intake.logs.datadoghq.com/api/v1/input"
 
 Resources:
   DeliveryStreamLogGroup:
@@ -122,7 +131,10 @@ Resources:
       HttpEndpointDestinationConfiguration:
         RoleARN: !GetAtt FirehoseLogsRole.Arn
         EndpointConfiguration:
-          Url: !Ref DatadogHttpEndpointUrl
+          Url: !FindInMap
+            - DatadogSiteToEndpoint
+            - !Ref DatadogSite
+            - Endpoint
           AccessKey: !Ref DatadogAPIKey
           Name: "datadog-logs-endpoint"
         RequestConfiguration:

@@ -11,8 +11,6 @@ Parameters:
     Type: String
   ObservabilityOu:
     Type: String
-  DatadogHttpEndpointUrl:
-    Type: String
   DatadogSite:
     Type: String
   DatadogApiKey:
@@ -54,7 +52,7 @@ Resources:
         AwsOrgId: !Ref AwsOrgId
         ObservabilityOu: !Ref ObservabilityOu
         TargetRegions: !Ref TargetRegions
-        DatadogHttpEndpointUrl: !Ref DatadogHttpEndpointUrl
+        DatadogSite: !Ref DatadogSite
         DatadogApiKey: !Ref DatadogApiKey
 
   LogShippingStackSet:

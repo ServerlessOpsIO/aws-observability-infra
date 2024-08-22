@@ -16,7 +16,7 @@ Parameters:
   TargetRegions:
     Type: CommaDelimitedList
     Description: Regions to deploy to
-  DatadogHttpEndpointUrl:
+  DatadogSite:
     Type: String
   DatadogApiKey:
     Type: String
@@ -29,8 +29,8 @@ Resources:
       StackSetName: DatadogLogShipping
       Description: Datadog log shipping
       Parameters:
-        - ParameterKey: DatadogHttpEndpointUrl
-          ParameterValue: !Ref DatadogHttpEndpointUrl
+        - ParameterKey: DatadogSite
+          ParameterValue: !Ref DatadogSite
         - ParameterKey: DatadogAPIKey
           ParameterValue: !Ref DatadogApiKey
         - ParameterKey: AwsOrgId
