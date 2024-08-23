@@ -22,6 +22,8 @@ Parameters:
   DataDogLogsDestinationArn:
     Type: String
     NoEcho: 'true'
+  AwsOamSinkArn:
+    Type: String
 
 Resources:
   DatadogIntegrationStackSet:
@@ -74,3 +76,13 @@ Resources:
       Location: "./stacksets/logging/template.yaml"
       Parameters:
         DestinationArn: !Ref DataDogLogsDestinationArn
+
+  MetricsSinkManagementStack:
+    Type: AWS::Serverless::Application
+    DependsOn:
+      - DatadogShippingStackSet
+    Properties:
+      Location: "./stacksets/metrics/template.yaml"
+      Parameters:
+        AwsOamSinkArn: !Ref AwsOamSinkArn
+
