@@ -230,6 +230,7 @@ Resources:
       Name: "datadog-metrics-stream"
       FirehoseArn: !GetAtt DatadogMetricKinesisFirehose.Arn
       RoleArn: !GetAtt CloudWatchMetricsStreamRole.Arn
+      IncludeLinkedAccountsMetrics: true
       OutputFormat: "opentelemetry0.7"
       IncludeFilters: !If
         - IsInclude
