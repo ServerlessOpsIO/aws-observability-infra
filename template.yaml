@@ -36,6 +36,7 @@ Resources:
         DatadogApiKey: !Ref DatadogApiKey
         DatadogAppKey: !Ref DatadogAppKey
         DatadogSite: !Ref DatadogSite
+        DisableMetricCollection: 'true'
   
   DatadogIntegrationManagementStack:
     Type: AWS::Serverless::Application
@@ -45,6 +46,7 @@ Resources:
         DatadogApiKey: !Ref DatadogApiKey
         DatadogAppKey: !Ref DatadogAppKey
         DatadogSite: !Ref DatadogSite
+        DisableMetricCollection: 'true'
 
   DatadogShippingStackSet:
     Type: AWS::Serverless::Application

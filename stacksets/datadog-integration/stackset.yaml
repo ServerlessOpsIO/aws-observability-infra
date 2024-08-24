@@ -15,6 +15,9 @@ Parameters:
   DatadogAppKey:
     Type: String
     NoEcho: 'true'
+  DisableMetricCollection:
+    Type: String
+    Default: 'false'
 
 Resources:
   DatadogLogShippingStackSet:
@@ -29,6 +32,8 @@ Resources:
           ParameterValue: !Ref DatadogApiKey
         - ParameterKey: DatadogAppKey
           ParameterValue: !Ref DatadogAppKey
+        - ParameterKey: DisableMetricCollection
+          ParameterValue: !Ref DisableMetricCollection
       Capabilities:
         - CAPABILITY_IAM
         - CAPABILITY_NAMED_IAM
