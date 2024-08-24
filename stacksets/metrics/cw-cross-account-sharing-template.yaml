@@ -6,6 +6,7 @@ Description: Enables CloudWatch in central monitoring accounts to assume permiss
 Parameters:
   ObservabilityOuPath:
     Type: String
+    Description: OU of observability accounts
 
   Policy:
     Description: The level of access to give to the Monitoring accounts
@@ -17,6 +18,10 @@ Parameters:
       - CloudWatch-AutomaticDashboards-and-ServiceLens
       - CloudWatch-core-permissions
       - View-Access-for-all-services
+  
+  MonitoringAccountId:
+    Description: ID of monitoring account
+    Type: String
 
 Conditions:
   DoFullReadOnly: !Equals [ !Ref Policy, View-Access-for-all-services ]
@@ -24,10 +29,12 @@ Conditions:
   DoServiceLens: !Equals [ !Ref Policy, CloudWatch-and-ServiceLens ]
   DoServiceLensAndAutomaticDashboards: !Equals [ !Ref Policy, CloudWatch-AutomaticDashboards-and-ServiceLens ]
   DoCWReadOnly: !Equals [ !Ref Policy, CloudWatch-core-permissions ]
+  IsNotMonitoringAccount: !Not [ !Equals [ !Ref AWS::AccountId, !Ref MonitoringAccountId] ]
 
 Resources:
   CWCrossAccountSharingRole:
     Type: AWS::IAM::Role
+    Condition: IsNotMonitoringAccount
     Properties:
       RoleName: CloudWatch-CrossAccountSharingRole
       AssumeRolePolicyDocument:
@@ -41,8 +48,6 @@ Resources:
             Condition:
               StringEquals:
                 "aws:PrincipalOrgPaths": !Ref ObservabilityOuPath
-
-
       Path: "/"
       ManagedPolicyArns: !If
         - DoFullReadOnly
