@@ -82,7 +82,14 @@ Resources:
     DependsOn:
       - DatadogShippingStackSet
     Properties:
-      Location: "./stacksets/metrics/template.yaml"
+      Location: "./stacksets/metrics/oam-link-template.yaml"
       Parameters:
         AwsOamSinkArn: !Ref AwsOamSinkArn
 
+  CwCrossAccountShareManagementStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/metrics/cw-cross-account-sharing-template.yaml"
+      Parameters:
+        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ObservabilityOu}"
+        Policy: View-Access-for-all-services
