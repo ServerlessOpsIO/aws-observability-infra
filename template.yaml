@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS account observability stack
+
+Parameters:
+  TargetRegions:
+    Type: String
+    Description: List of OUs
+  ObservabilityOu:
+    Type: String
+    Description: OU of observability accounts
+  DatadogHttpEndpointUrl:
+    Type: String
+    AllowedValues:
+      - https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input
+      - https://aws-kinesis-http-intake.logs.datadoghq.eu/v1/input
+  DatadogApiKey:
+    Type: String
+    NoEcho: 'true'
+
+Resources:
+
+  DatadogShippingStackSet:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/datadog-shipping/stackset.yaml"
+      Parameters:
+        ObservabilityOu: !Ref ObservabilityOu
+        TargetRegions: !Ref TargetRegions
+        DatadogHttpEndpointUrl: !Ref DatadogHttpEndpointUrl
+        DatadogApiKey: !Ref DatadogApiKey

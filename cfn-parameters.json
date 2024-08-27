@@ -1,0 +1,6 @@
+{
+    "ObservabilityOu": "ou-c834-7gp1wa8v",
+    "TargetRegions": "us-east-1",
+    "DatadogHttpEndpointUrl": "https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input",
+    "DatadogApiKey": $secrets.DATADOG_API_KEY
+}
