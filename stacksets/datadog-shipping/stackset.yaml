@@ -1,11 +1,15 @@
 Metadata:
-  localTemplateFile: &template_body ./logs-template.yaml
+  DatadogLogShipping:
+    localTemplateFile: &dd_logs_template_body ./logs-template.yaml
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: AWS account infrastructure stackset (datadog)
 
 Parameters:
+  AwsOrgId:
+    Type: String
+    Description: AWS Organization ID
   ObservabilityOu:
     Type: CommaDelimitedList
     Description: List of OUs
@@ -29,6 +33,8 @@ Resources:
           ParameterValue: !Ref DatadogHttpEndpointUrl
         - ParameterKey: DatadogAPIKey
           ParameterValue: !Ref DatadogApiKey
+        - ParameterKey: AwsOrgId
+          ParameterValue: !Ref AwsOrgId
       Capabilities:
         - CAPABILITY_IAM
       StackInstancesGroup:
@@ -45,4 +51,4 @@ Resources:
         FailureToleranceCount: 1
         MaxConcurrentCount: 5
       PermissionModel: SERVICE_MANAGED
-      TemplateBody: *template_body
+      TemplateBody: *dd_logs_template_body

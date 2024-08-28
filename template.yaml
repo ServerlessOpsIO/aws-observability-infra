@@ -3,6 +3,10 @@ Transform: AWS::Serverless-2016-10-31
 Description: AWS account observability stack
 
 Parameters:
+  AwsOrgId:
+    Type: String
+  AwsOrgRootId:
+    Type: String
   TargetRegions:
     Type: String
     Description: List of OUs
@@ -22,6 +26,7 @@ Resources:
     Properties:
       Location: "./stacksets/datadog-shipping/stackset.yaml"
       Parameters:
+        AwsOrgId: !Ref AwsOrgId
         ObservabilityOu: !Ref ObservabilityOu
         TargetRegions: !Ref TargetRegions
         DatadogHttpEndpointUrl: !Ref DatadogHttpEndpointUrl

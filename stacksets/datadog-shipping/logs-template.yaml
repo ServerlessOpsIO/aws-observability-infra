@@ -4,6 +4,8 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Datadog log shipper
 
 Parameters:
+  AwsOrgId:
+    Type: String
   DatadogHttpEndpointUrl:
     Type: String
   DatadogAPIKey:
@@ -144,3 +146,37 @@ Resources:
             Enabled: true
             LogGroupName: !Ref DeliveryStreamLogGroup
             LogStreamName: !Ref BackupDeliveryLogStream
+
+  CloudWatchAccountPolicy:
+    Type: AWS::Logs::AccountPolicy
+    Properties:
+      PolicyName: Datadog-Logs-Firehose
+      PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DatadogDeliveryStream.Arn}", "FilterPattern": ""}'
+      SelectionCriteria: !Sub 'LogGroupName NOT IN ["${DeliveryStreamLogGroup}"]'
+      PolicyType: "SUBSCRIPTION_FILTER_POLICY"
+
+  DatadogLogsDestination:
+    Type: AWS::Logs::Destination
+    Properties:
+      DestinationName: DATADOG-LOGS-FIREHOSE
+      DestinationPolicy: !Sub '{
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+              "logs:PutSubscriptionFilter",
+              "logs:PutAccountPolicy"
+            ],
+            "Resource": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:destination:DATADOG-LOGS-FIREHOSE",
+            "Condition": {
+              "StringEquals": {
+                "aws:PrincipalOrgID": "${AwsOrgId}"
+              }
+            }
+          }
+        ]
+      }'
+      RoleArn: !GetAtt CloudWatchLogsRole.Arn
+      TargetArn: !GetAtt DatadogDeliveryStream.Arn
