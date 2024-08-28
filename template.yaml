@@ -18,6 +18,9 @@ Parameters:
   DatadogApiKey:
     Type: String
     NoEcho: 'true'
+  DataDogLogsDestinationArn:
+    Type: String
+    NoEcho: 'true'
 
 Resources:
 
@@ -31,3 +34,12 @@ Resources:
         TargetRegions: !Ref TargetRegions
         DatadogHttpEndpointUrl: !Ref DatadogHttpEndpointUrl
         DatadogApiKey: !Ref DatadogApiKey
+
+  LogShippingManagementStack:
+    Type: AWS::Serverless::Application
+    DependsOn:
+      - DatadogShippingStackSet
+    Properties:
+      Location: "./stacksets/logging/template.yaml"
+      Parameters:
+        DestinationArn: !Ref DataDogLogsDestinationArn

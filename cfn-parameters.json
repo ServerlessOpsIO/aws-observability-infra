@@ -1,6 +1,9 @@
 {
+    "AwsOrgId": $secrets.AWS_ORG_ID,
+    "AwsOrgRootId": $secrets.AWS_ORG_ROOT_ID,
     "ObservabilityOu": "ou-c834-7gp1wa8v",
     "TargetRegions": "us-east-1",
     "DatadogHttpEndpointUrl": "https://aws-kinesis-http-intake.logs.us5.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose",
-    "DatadogApiKey": $secrets.DATADOG_API_KEY
+    "DatadogApiKey": $secrets.DATADOG_API_KEY,
+    "DataDogLogsDestinationArn": $secrets.DATADOG_LOGS_DESTINATION_ARN
 }
