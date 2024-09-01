@@ -62,14 +62,14 @@ Resources:
         DeploymentOrgId: !Ref AwsOrgRootId
         TargetRegions: !Ref TargetRegions
 
-#  CwCrossAccountShareStackSet:
-#    Type: AWS::Serverless::Application
-#    Properties:
-#      Location: "./stacksets/metrics/stackset.yaml"
-#      Parameters:
-#        DeploymentOrgId: !Ref AwsOrgRootId
-#        TargetRegions: !Ref TargetRegions
-#        AwsOamSinkArn: !Ref AwsOamSinkArn
-#        CrossAccountSharingPolicy: View-Access-for-all-services
-#        MonitoringAccountId: !Select [ "4", !Split [ ":", !Ref AwsOamSinkArn ] ]
-#        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ManagementOu}/${ObservabilityOu}"
+  CwCrossAccountShareStackSet:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/metrics/stackset.yaml"
+      Parameters:
+        DeploymentOrgId: !Ref AwsOrgRootId
+        TargetRegions: !Ref TargetRegions
+        AwsOamSinkArn: !Ref AwsOamSinkArn
+        CrossAccountSharingPolicy: View-Access-for-all-services
+        MonitoringAccountId: !Select [ "4", !Split [ ":", !Ref AwsOamSinkArn ] ]
+        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ManagementOu}/${ObservabilityOu}"
