@@ -25,6 +25,7 @@ Resources:
     Properties:
       StackSetName: DatadogIntegration
       Description: Datadog integration
+      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: DatadogSite
           ParameterValue: !Ref DatadogSite

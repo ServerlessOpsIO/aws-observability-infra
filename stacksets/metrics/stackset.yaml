@@ -33,6 +33,7 @@ Resources:
     Type: AWS::CloudFormation::StackSet
     Properties:
       StackSetName: CloudWatchOamLink
+      CallAs: DELEGATED_ADMIN
       Description: CloudWatch OAM Link
       Parameters:
         - ParameterKey: AwsOamSinkArn
@@ -58,6 +59,7 @@ Resources:
     Properties:
       StackSetName: CloudWatchCrossAccountShare
       Description: CloudWatch cross-account sharing
+      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: ObservabilityOuPath
           ParameterValue:  !Ref ObservabilityOuPath

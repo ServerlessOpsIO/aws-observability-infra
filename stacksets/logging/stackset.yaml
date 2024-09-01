@@ -19,6 +19,7 @@ Resources:
     Properties:
       StackSetName: DatadogLogging
       Description: Datadog logging
+      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: DestinationArn
           ParameterValue: !Ref DestinationArn
