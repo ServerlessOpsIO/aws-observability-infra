@@ -7,7 +7,7 @@ Parameters:
     Type: String
   AwsOrgRootId:
     Type: String
-  TargetRegions:
+  ManagementOu:
     Type: String
   ObservabilityOu:
     Type: String
@@ -26,19 +26,7 @@ Parameters:
     Type: String
 
 Resources:
-  DatadogIntegrationStackSet:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: "./stacksets/datadog-integration/stackset.yaml"
-      Parameters:
-        DeploymentOrgId: !Ref AwsOrgRootId
-        TargetRegions: !Ref TargetRegions
-        DatadogApiKey: !Ref DatadogApiKey
-        DatadogAppKey: !Ref DatadogAppKey
-        DatadogSite: !Ref DatadogSite
-        DisableMetricCollection: 'true'
-  
-  DatadogIntegrationManagementStack:
+  DatadogIntegrationStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: "https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml"
@@ -48,63 +36,25 @@ Resources:
         DatadogSite: !Ref DatadogSite
         DisableMetricCollection: 'true'
 
-  DatadogShippingStackSet:
+  LogShippingStack:
     Type: AWS::Serverless::Application
-    Properties:
-      Location: "./stacksets/datadog-shipping/stackset.yaml"
-      Parameters:
-        AwsOrgId: !Ref AwsOrgId
-        ObservabilityOu: !Ref ObservabilityOu
-        TargetRegions: !Ref TargetRegions
-        DatadogSite: !Ref DatadogSite
-        DatadogApiKey: !Ref DatadogApiKey
-
-  LogShippingStackSet:
-    Type: AWS::Serverless::Application
-    DependsOn:
-      - DatadogShippingStackSet
-    Properties:
-      Location: "./stacksets/logging/stackset.yaml"
-      Parameters:
-        DestinationArn: !Ref DataDogLogsDestinationArn
-        DeploymentOrgId: !Ref AwsOrgRootId
-        TargetRegions: !Ref TargetRegions
-
-  LogShippingManagementStack:
-    Type: AWS::Serverless::Application
-    DependsOn:
-      - DatadogShippingStackSet
     Properties:
       Location: "./stacksets/logging/template.yaml"
       Parameters:
         DestinationArn: !Ref DataDogLogsDestinationArn
 
-  MetricsSinkManagementStack:
+  MetricsSinkStack:
     Type: AWS::Serverless::Application
-    DependsOn:
-      - DatadogShippingStackSet
     Properties:
       Location: "./stacksets/metrics/oam-link-template.yaml"
       Parameters:
         AwsOamSinkArn: !Ref AwsOamSinkArn
 
-  CwCrossAccountShareStackSet:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: "./stacksets/metrics/stackset.yaml"
-      Parameters:
-        DeploymentOrgId: !Ref AwsOrgRootId
-        TargetRegions: !Ref TargetRegions
-        AwsOamSinkArn: !Ref AwsOamSinkArn
-        CrossAccountSharingPolicy: View-Access-for-all-services
-        MonitoringAccountId: !Select [ "4", !Split [ ":", !Ref AwsOamSinkArn ] ]
-        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ObservabilityOu}"
-
-  CwCrossAccountShareManagementStack:
+  CwCrossAccountShareStack:
     Type: AWS::Serverless::Application
     Properties:
       Location: "./stacksets/metrics/cw-cross-account-sharing-template.yaml"
       Parameters:
-        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ObservabilityOu}"
+        ObservabilityOuPath: !Sub "${AwsOrgId}/${AwsOrgRootId}/${ManagementOu}/${ObservabilityOu}"
         Policy: View-Access-for-all-services
         MonitoringAccountId: !Select [ "4", !Split [ ":", !Ref AwsOamSinkArn ] ]
