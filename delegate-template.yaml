@@ -51,16 +51,16 @@ Resources:
         DatadogSite: !Ref DatadogSite
         DisableMetricCollection: 'true'
 
-#  LogShippingStackSet:
-#    Type: AWS::Serverless::Application
-#    DependsOn:
-#      - DatadogShippingStackSet
-#    Properties:
-#      Location: "./stacksets/logging/stackset.yaml"
-#      Parameters:
-#        DestinationArn: !Ref DataDogLogsDestinationArn
-#        DeploymentOrgId: !Ref AwsOrgRootId
-#        TargetRegions: !Ref TargetRegions
+  LogShippingStackSet:
+    Type: AWS::Serverless::Application
+    DependsOn:
+      - DatadogShippingStackSet
+    Properties:
+      Location: "./stacksets/logging/stackset.yaml"
+      Parameters:
+        DestinationArn: !Ref DataDogLogsDestinationArn
+        DeploymentOrgId: !Ref AwsOrgRootId
+        TargetRegions: !Ref TargetRegions
 
 #  CwCrossAccountShareStackSet:
 #    Type: AWS::Serverless::Application
