@@ -39,17 +39,17 @@ Resources:
         DatadogSite: !Ref DatadogSite
         DatadogApiKey: !Ref DatadogApiKey
 
-#  DatadogIntegrationStackSet:
-#    Type: AWS::Serverless::Application
-#    Properties:
-#      Location: "./stacksets/datadog-integration/stackset.yaml"
-#      Parameters:
-#        DeploymentOrgId: !Ref AwsOrgRootId
-#        TargetRegions: !Ref TargetRegions
-#        DatadogApiKey: !Ref DatadogApiKey
-#        DatadogAppKey: !Ref DatadogAppKey
-#        DatadogSite: !Ref DatadogSite
-#        DisableMetricCollection: 'true'
+  DatadogIntegrationStackSet:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/datadog-integration/stackset.yaml"
+      Parameters:
+        DeploymentOrgId: !Ref AwsOrgRootId
+        TargetRegions: !Ref TargetRegions
+        DatadogApiKey: !Ref DatadogApiKey
+        DatadogAppKey: !Ref DatadogAppKey
+        DatadogSite: !Ref DatadogSite
+        DisableMetricCollection: 'true'
 
 #  LogShippingStackSet:
 #    Type: AWS::Serverless::Application
