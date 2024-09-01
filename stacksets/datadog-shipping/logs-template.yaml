@@ -161,6 +161,7 @@ Resources:
 
   CloudWatchAccountPolicy:
     Type: AWS::Logs::AccountPolicy
+    DependsOn: CloudWatchLogsPolicy
     Properties:
       PolicyName: Datadog-Logs-Firehose
       PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DatadogDeliveryStream.Arn}", "FilterPattern": ""}'
@@ -169,6 +170,7 @@ Resources:
 
   DatadogLogsDestination:
     Type: AWS::Logs::Destination
+    DependsOn: CloudWatchLogsPolicy
     Properties:
       DestinationName: DATADOG-LOGS-FIREHOSE
       DestinationPolicy: !Sub '{
