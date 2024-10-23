@@ -159,14 +159,14 @@ Resources:
             LogGroupName: !Ref DeliveryStreamLogGroup
             LogStreamName: !Ref BackupDeliveryLogStream
 
-  CloudWatchAccountPolicy:
-    Type: AWS::Logs::AccountPolicy
-    DependsOn: CloudWatchLogsPolicy
-    Properties:
-      PolicyName: Datadog-Logs-Firehose
-      PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DatadogDeliveryStream.Arn}", "FilterPattern": ""}'
-      SelectionCriteria: !Sub 'LogGroupName NOT IN ["${DeliveryStreamLogGroup}"]'
-      PolicyType: "SUBSCRIPTION_FILTER_POLICY"
+  #CloudWatchAccountPolicy:
+  #  Type: AWS::Logs::AccountPolicy
+  #  DependsOn: CloudWatchLogsPolicy
+  #  Properties:
+  #    PolicyName: Datadog-Logs-Firehose
+  #    PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DatadogDeliveryStream.Arn}", "FilterPattern": ""}'
+  #    SelectionCriteria: !Sub 'LogGroupName NOT IN ["${DeliveryStreamLogGroup}"]'
+  #    PolicyType: "SUBSCRIPTION_FILTER_POLICY"
 
   DatadogLogsDestination:
     Type: AWS::Logs::Destination
