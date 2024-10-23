@@ -7,7 +7,8 @@ Parameters:
     Type: String
 
 Conditions:
-  IsLoggingAccount: !Equals [ !Ref AWS::AccountId, !Select [ 4, !Split [ ":", !Ref DestinationArn ] ] ]
+  #IsLoggingAccount: !Equals [ !Ref AWS::AccountId, !Select [ 4, !Split [ ":", !Ref DestinationArn ] ] ]
+  IsLoggingAccount: !Equals [ !Ref AWS::AccountId, "156041432316" ]
   IsNotLoggingAccount: !Not [ Condition: IsLoggingAccount ] 
 
 Resources:
