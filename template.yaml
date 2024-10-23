@@ -43,12 +43,12 @@ Resources:
       Parameters:
         DestinationArn: !Ref DataDogLogsDestinationArn
 
-  MetricsSinkStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: "./stacksets/metrics/oam-link-template.yaml"
-      Parameters:
-        AwsOamSinkArn: !Ref AwsOamSinkArn
+  #MetricsSinkStack:
+  #  Type: AWS::Serverless::Application
+  #  Properties:
+  #    Location: "./stacksets/metrics/oam-link-template.yaml"
+  #    Parameters:
+  #      AwsOamSinkArn: !Ref AwsOamSinkArn
 
   CwCrossAccountShareStack:
     Type: AWS::Serverless::Application
