@@ -28,17 +28,6 @@ Parameters:
     Type: String
 
 Resources:
-  DatadogShippingStackSet:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: "./stacksets/datadog-shipping/stackset.yaml"
-      Parameters:
-        AwsOrgId: !Ref AwsOrgId
-        ObservabilityOu: !Ref ObservabilityOu
-        TargetRegions: !Ref TargetRegions
-        DatadogSite: !Ref DatadogSite
-        DatadogApiKey: !Ref DatadogApiKey
-
   DatadogIntegrationStackSet:
     Type: AWS::Serverless::Application
     Properties:

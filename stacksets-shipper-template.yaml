@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS account observability stack
+
+Parameters:
+  AwsOrgId:
+    Type: String
+  AwsOrgRootId:
+    Type: String
+  TargetRegions:
+    Type: String
+  ManagementOu:
+    Type: String
+  ObservabilityOu:
+    Type: String
+  DatadogSite:
+    Type: String
+  DatadogApiKey:
+    Type: String
+    NoEcho: 'true'
+  DatadogAppKey:
+    Type: String
+    NoEcho: 'true'
+  DataDogLogsDestinationArn:
+    Type: String
+    NoEcho: 'true'
+  AwsOamSinkArn:
+    Type: String
+
+Resources:
+  DatadogShippingStackSet:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: "./stacksets/datadog-shipping/stackset.yaml"
+      Parameters:
+        AwsOrgId: !Ref AwsOrgId
+        ObservabilityOu: !Ref ObservabilityOu
+        TargetRegions: !Ref TargetRegions
+        DatadogSite: !Ref DatadogSite
+        DatadogApiKey: !Ref DatadogApiKey
