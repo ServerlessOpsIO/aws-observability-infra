@@ -32,7 +32,6 @@ Resources:
     Properties:
       StackSetName: DatadogLogShipping
       Description: Datadog log shipping
-      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: DatadogSite
           ParameterValue: !Ref DatadogSite
@@ -63,7 +62,6 @@ Resources:
     Properties:
       StackSetName: DatadogMetricsStreams
       Description: Datadog metrics stream
-      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: DatadogApiKey
           ParameterValue: !Ref DatadogApiKey
@@ -100,7 +98,6 @@ Resources:
     Properties:
       StackSetName: CloudWatchMetricsSink
       Description: CloudWatch metrics cross-account sink
-      CallAs: DELEGATED_ADMIN
       Parameters:
         - ParameterKey: AwsOrgId
           ParameterValue: !Ref AwsOrgId
