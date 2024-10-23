@@ -22,10 +22,10 @@ Resources:
               Service: !Sub "logs.${AWS::Region}.amazonaws.com"
             Action: sts:AssumeRole
 
-  #CloudWatchAccountPolicy:
-  #  Type: AWS::Logs::AccountPolicy
-  #  Condition: IsNotLoggingAccount
-  #  Properties:
-  #    PolicyName: Datadog-Logs-Firehose
-  #    PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DestinationArn}", "FilterPattern": ""}'
-  #    PolicyType: "SUBSCRIPTION_FILTER_POLICY"
+  CloudWatchAccountPolicy:
+    Type: AWS::Logs::AccountPolicy
+    Condition: IsNotLoggingAccount
+    Properties:
+      PolicyName: Datadog-Logs-Firehose
+      PolicyDocument: !Sub '{ "RoleArn": "${CloudWatchLogsRole.Arn}", "DestinationArn": "${DestinationArn}", "FilterPattern": ""}'
+      PolicyType: "SUBSCRIPTION_FILTER_POLICY"
