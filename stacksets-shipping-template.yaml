@@ -42,8 +42,6 @@ Resources:
 
   LogShippingStackSet:
     Type: AWS::Serverless::Application
-    DependsOn:
-      - DatadogShippingStackSet
     Properties:
       Location: "./stacksets/logging/stackset.yaml"
       Parameters:
