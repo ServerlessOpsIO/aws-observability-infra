@@ -60,7 +60,7 @@ Resources:
   CloudWatchLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub "${AWS::StackName}-datadog-cloudwatch-logs-policy"
+      PolicyName: datadog-cloudwatch-logs-policy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -68,7 +68,6 @@ Resources:
             Action:
               - firehose:PutRecord
               - firehose:PutRecordBatch
-              - kinesis:PutRecord
             Resource: !GetAtt DatadogDeliveryStream.Arn
           - Effect: Allow
             Action:
@@ -95,7 +94,7 @@ Resources:
   FirehoseLogsPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub "${AWS::StackName}-datadog-firehose-delivery-policy"
+      PolicyName: datadog-firehose-delivery-policy
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
