@@ -156,61 +156,15 @@ jobs:
       - name: Install AWS SAM
         uses: aws-actions/setup-sam@v2
 
-      - name: Process AWS Tags
-        id: processaws-tags
-        shell: bash
-        run: >-
-          AWS_CFN_TAGS=$(
-            cat cfn-tags.json |
-            jq -r '
-              to_entries |
-              map("\(.key)=\(.value|tostring)") |
-              . += [
-                "org:branch=${{ env.GITHUB_EVENT_REF_SLUG_URL }}",
-                "org:stackName=${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipper"
-              ] |
-              join(" ")
-            '
-          ) &&
-          echo "AWS_CFN_TAGS=--tags ${AWS_CFN_TAGS}">> $GITHUB_ENV
-
-      - name: Process AWS Cloudformation Parameters
-        id: process-aws-parameters
-        shell: bash
-        env:
-          GHA_SECRETS: ${{ tojson(secrets) }}
-          GHA_ENV: ${{ toJson(env) }}
-        run: >-
-         AWS_CFN_PARAMS=$(
-            jq \
-              -n \
-              --argjson secrets "$GHA_SECRETS" \
-              --argjson env "$GHA_ENV" \
-              -f cfn-parameters.json |
-            jq \
-              -r '
-                to_entries |
-                map("\(.key)=\(.value|tostring)") |
-                join(" ")
-              '
-          ) &&
-          echo "AWS_CFN_PARAMS=--parameter-overrides ${AWS_CFN_PARAMS}" >> $GITHUB_ENV
-
-      - name: Deploy via SAM
-        id: deploy-sam
-        shell: bash
-        run: |
-          sam deploy \
-            --template-file packaged-stacksets-shipper-template.yaml \
-            --stack-name ${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipper \
-            --s3-bucket aws-sam-cli-sourcebucket-346402060170-us-east-1 \
-            --s3-prefix ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }} \
-            --region us-east-1 \
-            --role-arn arn:aws:iam::349603509961:role/CfnExecIamRole \
-            --on-failure DELETE \
-            $AWS_CFN_PARAMS \
-            $AWS_CFN_TAGS
-
+      - name: Deploy via AWS SAM
+        uses: ServerlessOpsIO/gha-deploy-aws-sam@v1
+        with:
+          aws_account_id: ${{ secrets.AWS_MANAGEMENT_ACCOUNT_ID }}
+          template_file: packaged-stacksets-shipper-template.yaml
+          stack_name: "${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipper"
+          cfn_capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+          env_json: ${{ toJson(vars) }}
+          secrets_json: ${{ toJson(secrets) }}
 
   deploy_shipping_stackset:
     needs:
@@ -259,61 +213,15 @@ jobs:
       - name: Install AWS SAM
         uses: aws-actions/setup-sam@v2
 
-      - name: Process AWS Tags
-        id: processaws-tags
-        shell: bash
-        run: >-
-          AWS_CFN_TAGS=$(
-            cat cfn-tags.json |
-            jq -r '
-              to_entries |
-              map("\(.key)=\(.value|tostring)") |
-              . += [
-                "org:branch=${{ env.GITHUB_EVENT_REF_SLUG_URL }}",
-                "org:stackName=${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipping"
-              ] |
-              join(" ")
-            '
-          ) &&
-          echo "AWS_CFN_TAGS=--tags ${AWS_CFN_TAGS}">> $GITHUB_ENV
-
-      - name: Process AWS Cloudformation Parameters
-        id: process-aws-parameters
-        shell: bash
-        env:
-          GHA_SECRETS: ${{ tojson(secrets) }}
-          GHA_ENV: ${{ toJson(env) }}
-        run: >-
-         AWS_CFN_PARAMS=$(
-            jq \
-              -n \
-              --argjson secrets "$GHA_SECRETS" \
-              --argjson env "$GHA_ENV" \
-              -f cfn-parameters.json |
-            jq \
-              -r '
-                to_entries |
-                map("\(.key)=\(.value|tostring)") |
-                join(" ")
-              '
-          ) &&
-          echo "AWS_CFN_PARAMS=--parameter-overrides ${AWS_CFN_PARAMS}" >> $GITHUB_ENV
-
-      - name: Deploy via SAM
-        id: deploy-sam
-        shell: bash
-        run: |
-          sam deploy \
-            --template-file packaged-stacksets-shipping-template.yaml \
-            --stack-name ${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipping \
-            --s3-bucket aws-sam-cli-sourcebucket-346402060170-us-east-1 \
-            --s3-prefix ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }} \
-            --region us-east-1 \
-            --role-arn arn:aws:iam::349603509961:role/CfnExecIamRole \
-            --on-failure DELETE \
-            $AWS_CFN_PARAMS \
-            $AWS_CFN_TAGS
-
+      - name: Deploy via AWS SAM
+        uses: ServerlessOpsIO/gha-deploy-aws-sam@v1
+        with:
+          aws_account_id: ${{ secrets.AWS_MANAGEMENT_ACCOUNT_ID }}
+          template_file: packaged-stacksets-shipping-template.yaml
+          stack_name: "${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipping"
+          cfn_capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+          env_json: ${{ toJson(vars) }}
+          secrets_json: ${{ toJson(secrets) }}
 
   deploy_management:
     needs:
@@ -362,58 +270,12 @@ jobs:
       - name: Install AWS SAM
         uses: aws-actions/setup-sam@v2
 
-      - name: Process AWS Tags
-        id: processaws-tags
-        shell: bash
-        run: >-
-          AWS_CFN_TAGS=$(
-            cat cfn-tags.json |
-            jq -r '
-              to_entries |
-              map("\(.key)=\(.value|tostring)") |
-              . += [
-                "org:branch=${{ env.GITHUB_EVENT_REF_SLUG_URL }}",
-                "org:stackName=${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-management"
-              ] |
-              join(" ")
-            '
-          ) &&
-          echo "AWS_CFN_TAGS=--tags ${AWS_CFN_TAGS}">> $GITHUB_ENV
-
-      - name: Process AWS Cloudformation Parameters
-        id: process-aws-parameters
-        shell: bash
-        env:
-          GHA_SECRETS: ${{ tojson(secrets) }}
-          GHA_ENV: ${{ toJson(env) }}
-        run: >-
-         AWS_CFN_PARAMS=$(
-            jq \
-              -n \
-              --argjson secrets "$GHA_SECRETS" \
-              --argjson env "$GHA_ENV" \
-              -f cfn-parameters.json |
-            jq \
-              -r '
-                to_entries |
-                map("\(.key)=\(.value|tostring)") |
-                join(" ")
-              '
-          ) &&
-          echo "AWS_CFN_PARAMS=--parameter-overrides ${AWS_CFN_PARAMS}" >> $GITHUB_ENV
-
-      - name: Deploy via SAM
-        id: deploy-sam
-        shell: bash
-        run: |
-          sam deploy \
-            --template-file packaged-template.yaml \
-            --stack-name ${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-management \
-            --s3-bucket aws-sam-cli-sourcebucket-346402060170-us-east-1 \
-            --s3-prefix ${{ env.GITHUB_REPOSITORY_OWNER_PART_SLUG_URL }}/${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}/${{ env.GITHUB_REF_SLUG_URL }} \
-            --region us-east-1 \
-            --role-arn arn:aws:iam::349603509961:role/CfnExecIamRole \
-            --on-failure DELETE \
-            $AWS_CFN_PARAMS \
-            $AWS_CFN_TAGS
-
+      - name: Deploy via AWS SAM
+        uses: ServerlessOpsIO/gha-deploy-aws-sam@v1
+        with:
+          aws_account_id: ${{ secrets.AWS_MANAGEMENT_ACCOUNT_ID }}
+          template_file: packaged-template.yaml
+          stack_name: "${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-management"
+          cfn_capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+          env_json: ${{ toJson(vars) }}
+          secrets_json: ${{ toJson(secrets) }}
