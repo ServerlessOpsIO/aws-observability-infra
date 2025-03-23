@@ -68,11 +68,11 @@ Resources:
         - ParameterKey: DatadogSite
           ParameterValue: !Ref DatadogSite
         - ParameterKey: FilterMethod
-          ParameterValue: 'NONE'
+          ParameterValue: 'Exclude'
         - ParameterKey: FirstNamespace
-          ParameterValue: ''
+          ParameterValue: 'AWS/Config'
         - ParameterKey: SecondNamespace
-          ParameterValue: ''
+          ParameterValue: 'AWS/Usage'
         - ParameterKey: ThirdNamespace
           ParameterValue: ''
       Capabilities:
