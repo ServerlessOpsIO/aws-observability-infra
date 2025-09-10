@@ -100,6 +100,8 @@ jobs:
     steps:
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v1
+        with:
+          checkout_artifact: true
 
       - name: Setup Python
         uses: ServerlessOpsIO/gha-setup-python@v1
@@ -140,6 +142,8 @@ jobs:
     steps:
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v1
+        with:
+          checkout_artifact: true
 
       - name: Setup Python
         uses: ServerlessOpsIO/gha-setup-python@v1
@@ -175,6 +179,8 @@ jobs:
     steps:
       - name: Setup job workspace
         uses: ServerlessOpsIO/gha-setup-workspace@v1
+        with:
+          checkout_artifact: true
 
       - name: Setup Python
         uses: ServerlessOpsIO/gha-setup-python@v1
