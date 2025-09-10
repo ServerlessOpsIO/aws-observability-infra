@@ -106,11 +106,6 @@ jobs:
       - name: Setup Python
         uses: ServerlessOpsIO/gha-setup-python@v1
 
-      - name: 'DEBUG: show files'
-        run: |
-          echo "Files in workspace:"
-          tree -a ./
-
 #      - name: Assume AWS Credentials
 #        uses: ServerlessOpsIO/gha-assume-aws-credentials@v1
 #        with:
