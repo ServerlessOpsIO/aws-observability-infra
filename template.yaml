@@ -34,7 +34,7 @@ Resources:
         DatadogApiKey: !Ref DatadogApiKey
         DatadogAppKey: !Ref DatadogAppKey
         DatadogSite: !Ref DatadogSite
-        DisableMetricCollection: 'false'
+        DisableMetricCollection: 'true'
 
   LogShippingStack:
     Type: AWS::Serverless::Application
