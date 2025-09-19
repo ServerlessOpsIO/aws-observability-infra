@@ -160,7 +160,8 @@ jobs:
           template_file: packaged-stacksets-shipping-template.yaml
           stack_name: "${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-shipping"
           cfn_capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-          env_json: ${{ toJson(vars) }}
+          env_json: ${{ toJson(env) }}
+          vars_json: ${{ toJson(vars) }}
           secrets_json: ${{ toJson(secrets) }}
 
   deploy_management:
@@ -197,5 +198,6 @@ jobs:
           template_file: packaged-template.yaml
           stack_name: "${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG_URL }}-${{ env.GITHUB_EVENT_REF_SLUG_URL }}-management"
           cfn_capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-          env_json: ${{ toJson(vars) }}
+          env_json: ${{ toJson(env) }}
+          vars_json: ${{ toJson(vars) }}
           secrets_json: ${{ toJson(secrets) }}
