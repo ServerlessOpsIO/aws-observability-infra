@@ -8,5 +8,6 @@
     "DatadogApiKey": $secrets.DATADOG_API_KEY,
     "DatadogAppKey": $secrets.DATADOG_APP_KEY,
     "DataDogLogsDestinationArn": $secrets.DATADOG_LOGS_DESTINATION_ARN,
-    "DatadogSite": "us5.datadoghq.com"
+    "DatadogSite": "us5.datadoghq.com",
+    "DatadogTemplateUrl": $vars.DATADOG_TEMPLATE_URL
 }

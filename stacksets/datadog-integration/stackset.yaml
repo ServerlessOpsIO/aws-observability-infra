@@ -7,6 +7,8 @@ Parameters:
     Type: CommaDelimitedList
   TargetRegions:
     Type: CommaDelimitedList
+  DatadogTemplateUrl:
+    Type: String
   DatadogSite:
     Type: String
   DatadogApiKey:
@@ -51,4 +53,4 @@ Resources:
         FailureToleranceCount: 1
         MaxConcurrentCount: 5
       PermissionModel: SERVICE_MANAGED
-      TemplateURL: https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml
+      TemplateURL: !Ref DatadogTemplateUrl
