@@ -26,15 +26,15 @@ Parameters:
     Type: String
 
 Resources:
-  DatadogIntegrationStack:
-    Type: AWS::Serverless::Application
-    Properties:
-      Location: "https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml"
-      Parameters:
-        DatadogApiKey: !Ref DatadogApiKey
-        DatadogAppKey: !Ref DatadogAppKey
-        DatadogSite: !Ref DatadogSite
-        DisableMetricCollection: 'false'
+#  DatadogIntegrationStack:
+#    Type: AWS::Serverless::Application
+#    Properties:
+#      Location: "https://datadog-cloudformation-template.s3.amazonaws.com/aws/main_organizations.yaml"
+#      Parameters:
+#        DatadogApiKey: !Ref DatadogApiKey
+#        DatadogAppKey: !Ref DatadogAppKey
+#        DatadogSite: !Ref DatadogSite
+#        DisableMetricCollection: 'false'
 
   LogShippingStack:
     Type: AWS::Serverless::Application
