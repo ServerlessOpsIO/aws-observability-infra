@@ -35,3 +35,7 @@ This solution deploys a set of AWS resources across your AWS Organization to ena
 - **`stacksets/metrics/stackset.yaml`**, **`stacksets/metrics/oam-link-template.yaml`**, and **`stacksets/metrics/cw-cross-account-sharing-template.yaml`**: Deploy OAM Links and cross-account sharing roles to enable metric sharing from member accounts to the central account.
 - **`stacksets/datadog-shipping/stackset.yaml`** and related templates: Deploy resources in the central account to receive logs/metrics and forward them to Datadog.
 - **Root-level templates** (e.g., `template.yaml`, `stacksets-shipping-template.yaml`): Compose and orchestrate the deployment of the above stacksets and templates for a full organization-wide rollout.
+
+## Datadog template Updates
+
+Due to a limitation in AWS SAM's `package` command in `template.yaml` the `DatadogIntegrationStack` `Location` parameter must be kept in sync manually with the `DatadogTemplateUrl` value.

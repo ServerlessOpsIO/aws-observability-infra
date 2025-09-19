@@ -11,6 +11,8 @@ Parameters:
     Type: String
   ObservabilityOu:
     Type: String
+  # WARNING: due to a limitation of AWS SAM's `package` command the DatadogIntegrationStack
+  # Location parameter must be kept in sync manually.
   DatadogTemplateUrl:
     Type: String
   DatadogSite:
@@ -31,7 +33,7 @@ Resources:
   DatadogIntegrationStack:
     Type: AWS::Serverless::Application
     Properties:
-      Location: !Ref DatadogTemplateUrl
+      Location: "https://datadog-cloudformation-template-quickstart.s3.amazonaws.com/aws/v4.1.3/main_orgnizations.yaml"
       Parameters:
         DatadogApiKey: !Ref DatadogApiKey
         DatadogAppKey: !Ref DatadogAppKey
