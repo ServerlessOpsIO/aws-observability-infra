@@ -22,7 +22,7 @@ Mappings:
         "us5.datadoghq.com":
             Endpoint: "https://aws-kinesis-http-intake.logs.us5.datadoghq.com/api/v2/logs?dd-protocol=aws-kinesis-firehose"
         "datadoghq.com":
-            Endpoint: "https://aws-kinesis-http-intake.logs.datadoghq.com/api/v1/input"
+            Endpoint: "https://aws-kinesis-http-intake.logs.datadoghq.com/v1/input"
 
 Resources:
   DeliveryStreamLogGroup:
@@ -106,7 +106,7 @@ Resources:
               - s3:ListBucket
               - s3:ListBucketMultipartUploads
               - s3:PutObject
-            Resource: 
+            Resource:
               - !GetAtt FailedDataBucket.Arn
               - !Sub "${FailedDataBucket.Arn}/*"
           - Effect: Allow
