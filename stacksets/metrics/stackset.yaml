@@ -48,6 +48,7 @@ Resources:
         Active: true
       OperationPreferences:
         RegionConcurrencyType: PARALLEL
+        ConcurrencyMode: SOFT_FAILURE_TOLERANCE
         FailureToleranceCount: 1
         MaxConcurrentCount: 5
       PermissionModel: SERVICE_MANAGED
@@ -79,7 +80,8 @@ Resources:
         Active: true
       OperationPreferences:
         RegionConcurrencyType: PARALLEL
-        FailureToleranceCount: 1
+        ConcurrencyMode: SOFT_FAILURE_TOLERANCE
         MaxConcurrentCount: 5
+        FailureToleranceCount: 1
       PermissionModel: SERVICE_MANAGED
       TemplateBody: *cross_account_sharing_template_body
