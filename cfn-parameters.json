@@ -9,5 +9,5 @@
     "DatadogAppKey": $secrets.DATADOG_APP_KEY,
     "DataDogLogsDestinationArn": $secrets.DATADOG_LOGS_DESTINATION_ARN,
     "DatadogSite": "us5.datadoghq.com",
-    "DatadogTemplateUrl": $vars.DATADOG_TEMPLATE_URL
+    "DatadogTemplateUrl": "https://datadog-cloudformation-template.s3.amazonaws.com/aws/v4.1.3/main_organizations.yaml"
 }
